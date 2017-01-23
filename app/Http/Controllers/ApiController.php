@@ -55,8 +55,8 @@ class ApiController extends Controller {
 		$password = 'wMxzS5w';
 		
 		$prepair = [
-               'wget -O /tmp/uap.sh http://'.$request->server_ip_address.'/uap/config/uap.sh',
-               'wget -O /tmp/mac.sh http://'.$request->server_ip_address.'/uap/config/rm_mac.sh',
+               'wget -O /tmp/uap.sh http://'.$request->input('server_ip_address').'/uap/config/uap.sh',
+               'wget -O /tmp/mac.sh http://'.$request->input('server_ip_address').'/uap/config/rm_mac.sh',
                'chmod +x /tmp/uap.sh',
                'chmod +x /tmp/mac.sh',
           ];
@@ -66,7 +66,7 @@ class ApiController extends Controller {
           $auth = @ssh2_auth_password($connection, $login, $password);
 
           if ($auth === false) {
-               $data = $auth;
+               return $auth;
           }
 
           if (!ssh2_exec($connection, implode(';' , $prepair))) {
@@ -75,7 +75,7 @@ class ApiController extends Controller {
 		 
 		sleep(1);
 		
-		if (!ssh2_exec($connection,'sh /tmp/uap.sh http://'.$request->server_ip_address.'/uap/get_mac/'.$request->id.' &')) {
+		if (!ssh2_exec($connection,'sh /tmp/uap.sh http://'.$request->input('server_ip_address').'/uap/get_mac/'.$request->input('id').' &')) {
 			return false;
 		}
           
@@ -85,9 +85,8 @@ class ApiController extends Controller {
 			return false;
 		}
 
-          $data = true;
+          return true;
 		
-		return response()->json($data); 
 	}
 
-	}
+}

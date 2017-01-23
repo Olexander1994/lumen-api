@@ -1,9 +1,5 @@
 <?php
 
-$app->get('/', function () use ($app) {
-    return $app->version();
-});
-
 $app->group(['prefix' => 'api'], function($app) {
 	
 	$app->post('authorize_guest','ApiController@authorize_guest');
